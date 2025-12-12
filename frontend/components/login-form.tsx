@@ -6,55 +6,32 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
-import { FormEvent, useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginSchema, LoginValues } from "@/lib/schemas";
+import { useLogin } from "@/hooks/use-auth";
+import type { ComponentProps } from "react";
 
-export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+export function LoginForm({ className, ...props }: ComponentProps<"div">) {
+  const { login, isLoading, error } = useLogin();
 
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setIsLoading(true);
-    setError("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginValues>({
+    resolver: zodResolver(loginSchema),
+  });
 
-    const formData = new FormData(e.currentTarget);
-    const username = formData.get("username") as string;
-    const password = formData.get("password") as string;
-
-    try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, password }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(data.message || "Login failed");
-        setIsLoading(false);
-        return;
-      }
-
-      // Get redirect URL from query params or default to dashboard
-      const searchParams = new URLSearchParams(window.location.search);
-      const redirectTo = searchParams.get("redirect") || "/dashboard";
-
-      // Redirect on success
-      window.location.href = redirectTo;
-    } catch {
-      setError("An error occurred. Please try again.");
-      setIsLoading(false);
-    }
-  }
+  const onSubmit = (data: LoginValues) => {
+    login(data);
+  };
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden p-0">
         <CardContent className="grid p-0 md:grid-cols-2">
-          <form className="p-6 md:p-8" onSubmit={handleSubmit}>
+          <form className="p-6 md:p-8" onSubmit={handleSubmit(onSubmit)}>
             <FieldGroup>
               <div className="flex flex-col items-center gap-2 text-center">
                 <h1 className="text-2xl font-bold">Welcome back</h1>
@@ -63,7 +40,8 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
               {error && <div className="bg-destructive/15 text-destructive rounded-md p-3 text-sm">{error}</div>}
               <Field>
                 <FieldLabel htmlFor="username">Username</FieldLabel>
-                <Input id="username" name="username" type="text" placeholder="Enter your username" required />
+                <Input id="username" type="text" placeholder="Enter your username" {...register("username")} />
+                {errors.username && <p className="text-destructive text-sm">{errors.username.message}</p>}
               </Field>
               <Field>
                 <div className="flex items-center">
@@ -72,7 +50,8 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                     Forgot your password?
                   </a>
                 </div>
-                <Input id="password" name="password" type="password" required />
+                <Input id="password" type="password" {...register("password")} />
+                {errors.password && <p className="text-destructive text-sm">{errors.password.message}</p>}
               </Field>
               <Field>
                 <Button type="submit" disabled={isLoading}>
