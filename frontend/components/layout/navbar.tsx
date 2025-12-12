@@ -29,7 +29,6 @@ export function Navbar() {
               {item.name}
             </Link>
           ))}
-          <Button>Login</Button>
         </nav>
 
         {/* --- 3. Mobile Menu (มือถือ) --- */}
