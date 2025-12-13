@@ -4,7 +4,7 @@ import type { NextRequest } from "next/server";
 // Define routes that require authentication
 const protectedRoutes = ["/dashboard", "/profile", "/posts"];
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Check if user has auth token
