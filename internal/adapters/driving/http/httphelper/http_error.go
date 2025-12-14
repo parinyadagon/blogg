@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 )
 
@@ -81,6 +82,28 @@ func HandleServiceError(c echo.Context, err error) error {
 	})
 }
 
+// HandleValidationError handles validator.ValidationErrors
+func HandleValidationError(c echo.Context, err error) error {
+	ve, ok := err.(validator.ValidationErrors)
+	if !ok {
+		return ErrorResponse(c, ErrorResponseParams{
+			StatusCode: http.StatusBadRequest,
+			Message:    "Validation failed",
+			ErrorCode:  "VALIDATION_ERROR",
+			Details:    err.Error(),
+		})
+	}
+
+	validationErrors := make([]ValidationError, 0, len(ve))
+	for _, fe := range ve {
+		validationErrors = append(validationErrors, ValidationError{
+			Field:  fe.Field(),
+			Reason: FormatValidationMessage(fe.Tag(), fe.Field(), fe.Param()),
+		})
+	}
+	return ValidationErrorResponse(c, validationErrors)
+}
+
 // FormatValidationMessage formats validator.FieldError to human readable message
 func FormatValidationMessage(tag, field, param string) string {
 	// Custom messages per field
@@ -97,6 +120,20 @@ func FormatValidationMessage(tag, field, param string) string {
 		"Password": {
 			"required": "Password is required",
 			"min":      "Password must be at least " + param + " characters",
+		},
+		"Title": {
+			"required": "Title is required",
+			"min":      "Title must be at least " + param + " characters",
+			"max":      "Title must not exceed " + param + " characters",
+		},
+		"Slug": {
+			"required": "Slug is required",
+			"slug":     "Slug must contain only lowercase letters, numbers, and hyphens",
+		},
+		"Content": {
+			"required": "Content is required",
+			"min":      "Content must be at least " + param + " characters",
+			"max":      "Content must not exceed " + param + " characters",
 		},
 	}
 
@@ -117,6 +154,10 @@ func FormatValidationMessage(tag, field, param string) string {
 		return field + " must be at least " + param + " characters"
 	case "max":
 		return field + " must not exceed " + param + " characters"
+	case "url":
+		return field + " must be a valid URL"
+	case "uuid":
+		return field + " must be a valid UUID"
 	default:
 		return field + " is invalid"
 	}

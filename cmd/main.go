@@ -29,8 +29,12 @@ func main() {
 	authService := service.NewAuthService(userRepo)
 	authHandler := httpAdapter.NewAuthHandler(authService)
 
+	postRepo := repository.NewPostRepository(db)
+	postService := service.NewPostService(postRepo)
+	postHandler := httpAdapter.NewPostHandler(postService)
+
 	// Setup router
-	router := httpAdapter.NewRouter(authHandler)
+	router := httpAdapter.NewRouter(authHandler, postHandler)
 	router.SetupRoutes()
 
 	// Start server in goroutine
