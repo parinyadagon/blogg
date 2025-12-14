@@ -71,3 +71,13 @@ func (m *AuthMiddleware) OptionalAuth(next echo.HandlerFunc) echo.HandlerFunc {
 		return next(c)
 	}
 }
+
+// GetUserID extracts user ID from context (set by auth middleware)
+// This is a defensive check - middleware should already validate and set this
+func GetUserID(c echo.Context) (string, error) {
+	userID, ok := c.Get("user_id").(string)
+	if !ok || userID == "" {
+		return "", errs.NewUnauthorizedError("User not authenticated")
+	}
+	return userID, nil
+}

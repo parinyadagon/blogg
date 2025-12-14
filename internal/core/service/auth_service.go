@@ -53,6 +53,7 @@ func (as *authService) Register(ctx context.Context, u *domain.UserRegisterReq) 
 		Username: u.Username,
 		Password: u.Password,
 		Email:    u.Email,
+		Role:     "user", // Default role
 	}
 
 	hashed, err := hasher.NewArgonHash().Hash(u.Password)

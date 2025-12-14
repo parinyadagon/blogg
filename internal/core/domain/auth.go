@@ -6,10 +6,13 @@ import (
 )
 
 type User struct {
-	ID       string `json:"id"`
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Email    string `json:"email"`
+	ID        string `json:"id" db:"id"`
+	Username  string `json:"username" db:"username"`
+	Password  string `json:"-" db:"password"` // Never expose password in JSON
+	Email     string `json:"email" db:"email"`
+	Role      string `json:"role" db:"role"`
+	CreatedAt string `json:"created_at" db:"created_at"`
+	UpdatedAt string `json:"updated_at" db:"updated_at"`
 }
 
 type UserRegisterReq struct {
