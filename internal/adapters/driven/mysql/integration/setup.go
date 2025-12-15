@@ -77,16 +77,19 @@ func SetupTestDB(t *testing.T) (*TestDatabase, func()) {
 
 func runMigrations(db *sqlx.DB) error {
 	migrations := []string{
-		`CREATE TABLE IF NOT EXISTS users (
-			id VARCHAR(36) PRIMARY KEY,
-			username VARCHAR(32) NOT NULL UNIQUE,
-			email VARCHAR(255) NOT NULL UNIQUE,
+		`CREATE TABLE users (
+			id VARCHAR(36) NOT NULL, -- แนะนำลดขนาดถ้าใช้ UUID (36 chars)
+			username VARCHAR(50) NOT NULL,
+			email VARCHAR(255) NOT NULL,
 			password VARCHAR(255) NOT NULL,
+			role ENUM('admin', 'editor', 'user') DEFAULT 'user', -- เพิ่ม role เผื่ออนาคต
 			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-			INDEX idx_username (username),
-			INDEX idx_email (email)
-		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
+			PRIMARY KEY (id),
+			UNIQUE KEY uk_users_username (username),
+			UNIQUE KEY uk_users_email (email)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+	`,
 	}
 
 	for _, migration := range migrations {

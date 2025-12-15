@@ -26,7 +26,13 @@ func setupTestServer(t *testing.T) (*echo.Echo, *mocks.MockAuthRepositoryPort) {
 	mockRepo := mocks.NewMockAuthRepositoryPort(t)
 	authService := service.NewAuthService(mockRepo)
 	authHandler := httpAdapter.NewAuthHandler(authService)
-	router := httpAdapter.NewRouter(authHandler)
+
+	// Create mock post repository and handler for router
+	mockPostRepo := mocks.NewMockPostRepositoryPort(t)
+	postService := service.NewPostService(mockPostRepo)
+	postHandler := httpAdapter.NewPostHandler(postService)
+
+	router := httpAdapter.NewRouter(authHandler, postHandler)
 	router.SetupRoutes()
 
 	return router.GetEcho(), mockRepo
@@ -50,7 +56,9 @@ func TestIntegration_UserRegister(t *testing.T) {
 			setupMock: func(m *mocks.MockAuthRepositoryPort) {
 				m.On("FindUserByUsername", mock.Anything, "newuser").Return((*domain.User)(nil), sql.ErrNoRows).Once()
 				m.On("FindUserByEmail", mock.Anything, "newuser@example.com").Return((*domain.User)(nil), sql.ErrNoRows).Once()
-				m.On("CreateUser", mock.Anything, mock.Anything).Return(nil).Once()
+				m.On("CreateUser", mock.Anything, mock.MatchedBy(func(u *domain.User) bool {
+					return u.Username == "newuser" && u.Email == "newuser@example.com" && u.Role == "user"
+				})).Return(nil).Once()
 			},
 			expectedStatus: http.StatusCreated,
 			validateBody: func(t *testing.T, body map[string]interface{}) {
@@ -70,7 +78,7 @@ func TestIntegration_UserRegister(t *testing.T) {
 				Password: "password123",
 			},
 			setupMock: func(m *mocks.MockAuthRepositoryPort) {
-				m.On("FindUserByUsername", mock.Anything, "existinguser").Return(&domain.User{ID: "123", Username: "existinguser"}, nil).Once()
+				m.On("FindUserByUsername", mock.Anything, "existinguser").Return(&domain.User{ID: "123", Username: "existinguser", Role: "user"}, nil).Once()
 			},
 			expectedStatus: http.StatusConflict,
 			validateBody: func(t *testing.T, body map[string]interface{}) {
@@ -90,7 +98,7 @@ func TestIntegration_UserRegister(t *testing.T) {
 			},
 			setupMock: func(m *mocks.MockAuthRepositoryPort) {
 				m.On("FindUserByUsername", mock.Anything, "newuser").Return((*domain.User)(nil), sql.ErrNoRows).Once()
-				m.On("FindUserByEmail", mock.Anything, "existing@example.com").Return(&domain.User{ID: "456", Email: "existing@example.com"}, nil).Once()
+				m.On("FindUserByEmail", mock.Anything, "existing@example.com").Return(&domain.User{ID: "456", Email: "existing@example.com", Role: "user"}, nil).Once()
 			},
 			expectedStatus: http.StatusConflict,
 			validateBody: func(t *testing.T, body map[string]interface{}) {

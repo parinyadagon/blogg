@@ -37,9 +37,9 @@ func TestAuthService_Register(t *testing.T) {
 				setupMock: func(m *mocks.MockAuthRepositoryPort) {
 					m.On("FindUserByUsername", mock.Anything, "user-1").Return((*domain.User)(nil), sql.ErrNoRows).Once()
 					m.On("FindUserByEmail", mock.Anything, "user-1@mail.com").Return((*domain.User)(nil), sql.ErrNoRows).Once()
-					m.EXPECT().CreateUser(mock.Anything, mock.Anything).
-						Return(nil).
-						Once()
+					m.On("CreateUser", mock.Anything, mock.MatchedBy(func(u *domain.User) bool {
+						return u.Username == "user-1" && u.Email == "user-1@mail.com" && u.Role == "user"
+					})).Return(nil).Once()
 				},
 				expectError: false,
 			},
@@ -56,7 +56,7 @@ func TestAuthService_Register(t *testing.T) {
 				name:  "return error when username already exists",
 				input: &domain.UserRegisterReq{Username: "existing-user", Email: "user@mail.com", Password: "123456"},
 				setupMock: func(m *mocks.MockAuthRepositoryPort) {
-					m.On("FindUserByUsername", mock.Anything, "existing-user").Return(&domain.User{ID: "123", Username: "existing-user"}, nil).Once()
+					m.On("FindUserByUsername", mock.Anything, "existing-user").Return(&domain.User{ID: "123", Username: "existing-user", Role: "user"}, nil).Once()
 				},
 				expectError: true,
 				expectedErr: domain.ErrUsernameExists,
@@ -66,7 +66,7 @@ func TestAuthService_Register(t *testing.T) {
 				input: &domain.UserRegisterReq{Username: "newuser", Email: "existing@mail.com", Password: "123456"},
 				setupMock: func(m *mocks.MockAuthRepositoryPort) {
 					m.On("FindUserByUsername", mock.Anything, "newuser").Return((*domain.User)(nil), sql.ErrNoRows).Once()
-					m.On("FindUserByEmail", mock.Anything, "existing@mail.com").Return(&domain.User{ID: "456", Email: "existing@mail.com"}, nil).Once()
+					m.On("FindUserByEmail", mock.Anything, "existing@mail.com").Return(&domain.User{ID: "456", Email: "existing@mail.com", Role: "user"}, nil).Once()
 				},
 				expectError: true,
 				expectedErr: domain.ErrEmailExists,

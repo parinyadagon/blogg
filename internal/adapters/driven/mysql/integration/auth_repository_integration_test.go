@@ -29,6 +29,7 @@ func TestAuthRepository_CreateUser_Integration(t *testing.T) {
 			Username: "testuser",
 			Email:    "test@example.com",
 			Password: "$argon2id$v=19$m=65536,t=3,p=2$salt$hash",
+			Role:     "user",
 		}
 
 		err := repo.CreateUser(context.Background(), user)
@@ -47,6 +48,7 @@ func TestAuthRepository_CreateUser_Integration(t *testing.T) {
 			Username: "duplicate",
 			Email:    "user1@example.com",
 			Password: "$argon2id$v=19$m=65536,t=3,p=2$salt$hash",
+			Role:     "user",
 		}
 
 		err := repo.CreateUser(context.Background(), user1)
@@ -58,6 +60,7 @@ func TestAuthRepository_CreateUser_Integration(t *testing.T) {
 			Username: "duplicate", // Same username
 			Email:    "user2@example.com",
 			Password: "$argon2id$v=19$m=65536,t=3,p=2$salt$hash",
+			Role:     "user",
 		}
 
 		err = repo.CreateUser(context.Background(), user2)
@@ -71,6 +74,7 @@ func TestAuthRepository_CreateUser_Integration(t *testing.T) {
 			Username: "user1",
 			Email:    "duplicate@example.com",
 			Password: "$argon2id$v=19$m=65536,t=3,p=2$salt$hash",
+			Role:     "user",
 		}
 
 		err := repo.CreateUser(context.Background(), user1)
@@ -82,6 +86,7 @@ func TestAuthRepository_CreateUser_Integration(t *testing.T) {
 			Username: "user2",
 			Email:    "duplicate@example.com", // Same email
 			Password: "$argon2id$v=19$m=65536,t=3,p=2$salt$hash",
+			Role:     "user",
 		}
 
 		err = repo.CreateUser(context.Background(), user2)
@@ -106,6 +111,7 @@ func TestAuthRepository_FindUserByUsername_Integration(t *testing.T) {
 		Username: "findme",
 		Email:    "findme@example.com",
 		Password: "$argon2id$v=19$m=65536,t=3,p=2$salt$hash",
+		Role:     "user",
 	}
 	err := repo.CreateUser(context.Background(), user)
 	require.NoError(t, err)
@@ -115,6 +121,7 @@ func TestAuthRepository_FindUserByUsername_Integration(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, "findme", foundUser.Username)
 		assert.Equal(t, "findme@example.com", foundUser.Email)
+		assert.Equal(t, "user", foundUser.Role)
 	})
 
 	t.Run("user not found", func(t *testing.T) {
@@ -139,6 +146,7 @@ func TestAuthRepository_FindUserByEmail_Integration(t *testing.T) {
 		Username: "emailtest",
 		Email:    "find@example.com",
 		Password: "$argon2id$v=19$m=65536,t=3,p=2$salt$hash",
+		Role:     "user",
 	}
 	err := repo.CreateUser(context.Background(), user)
 	require.NoError(t, err)
@@ -148,6 +156,7 @@ func TestAuthRepository_FindUserByEmail_Integration(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, "emailtest", foundUser.Username)
 		assert.Equal(t, "find@example.com", foundUser.Email)
+		assert.Equal(t, "user", foundUser.Role)
 	})
 
 	t.Run("email not found", func(t *testing.T) {
@@ -173,6 +182,7 @@ func TestAuthRepository_FindUserByID_Integration(t *testing.T) {
 		Username: "idtest",
 		Email:    "id@example.com",
 		Password: "$argon2id$v=19$m=65536,t=3,p=2$salt$hash",
+		Role:     "user",
 	}
 	err := repo.CreateUser(context.Background(), user)
 	require.NoError(t, err)
@@ -183,6 +193,7 @@ func TestAuthRepository_FindUserByID_Integration(t *testing.T) {
 		assert.Equal(t, userID, foundUser.ID)
 		assert.Equal(t, "idtest", foundUser.Username)
 		assert.Equal(t, "id@example.com", foundUser.Email)
+		assert.Equal(t, "user", foundUser.Role)
 	})
 
 	t.Run("user ID not found", func(t *testing.T) {
