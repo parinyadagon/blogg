@@ -1,6 +1,6 @@
 "use client";
 
-import { ArticleEditor } from "@/components/blog/article-editor";
+import { ArticleEditor } from "@/components/blog/post-editor";
 import { use } from "react";
 
 export default function EditPostPage({ params }: { params: Promise<{ id: string }> }) {

@@ -1,4 +1,4 @@
-import { ArticleEditor } from "@/components/blog/article-editor";
+import { ArticleEditor } from "@/components/blog/post-editor";
 
 export default function NewPostPage() {
   return <ArticleEditor />;
