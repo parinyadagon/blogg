@@ -1,4 +1,4 @@
-export interface Article {
+export interface Post {
   id: string;
   slug: string;
   title: string;
@@ -16,7 +16,7 @@ export interface Article {
   featured?: boolean;
 }
 
-export const articles: Article[] = [
+export const posts: Post[] = [
   {
     id: "1",
     slug: "getting-started-with-golang",
