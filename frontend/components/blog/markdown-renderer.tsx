@@ -7,7 +7,6 @@ import { useTheme } from "next-themes";
 import { Copy, Check } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 
 interface MarkdownRendererProps {
   content: string;
@@ -54,7 +53,7 @@ function CodeBlock({ language, children }: { language: string; children: string 
 
 export function MarkdownRenderer({ content }: MarkdownRendererProps) {
   return (
-    <div className="prose max-w-none">
+    <div className="prose prose-slate dark:prose-invert max-w-none">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
@@ -64,7 +63,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
               .replace(/[^\w\sก-๙]/g, "")
               .replace(/\s+/g, "-");
             return (
-              <h1 id={id} className="scroll-mt-24">
+              <h1 id={id} className="scroll-mt-24 text-4xl font-bold mb-4 mt-8 text-foreground">
                 {children}
               </h1>
             );
@@ -75,7 +74,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
               .replace(/[^\w\sก-๙]/g, "")
               .replace(/\s+/g, "-");
             return (
-              <h2 id={id} className="scroll-mt-24">
+              <h2 id={id} className="scroll-mt-24 text-3xl font-bold mb-3 mt-6 text-foreground">
                 {children}
               </h2>
             );
@@ -86,7 +85,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
               .replace(/[^\w\sก-๙]/g, "")
               .replace(/\s+/g, "-");
             return (
-              <h3 id={id} className="scroll-mt-24">
+              <h3 id={id} className="scroll-mt-24 text-2xl font-semibold mb-2 mt-5 text-foreground">
                 {children}
               </h3>
             );
@@ -109,16 +108,21 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
             return <>{children}</>;
           },
           a: ({ href, children }) => (
-            <a href={href} target="_blank" rel="noopener noreferrer" className="text-blog-link hover:text-blog-link-hover">
+            <a href={href} target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline font-medium">
               {children}
             </a>
           ),
-          img: ({ src, alt }) => (
-            <Image src={(src as string) || ""} alt={alt || ""} width={0} height={0} sizes="100vw" className="rounded-xl shadow-md w-full h-auto" />
-          ),
+          // eslint-disable-next-line @next/next/no-img-element
+          img: ({ src, alt }) => <img src={src} alt={alt} className="rounded-xl shadow-md w-full my-6" loading="lazy" />,
           blockquote: ({ children }) => (
-            <blockquote className="border-l-4 border-accent pl-6 text-blog-text-secondary not-italic">{children}</blockquote>
+            <blockquote className="border-l-4 border-accent pl-6 py-2 my-4 text-muted-foreground bg-muted/30 rounded-r-lg">{children}</blockquote>
           ),
+          ul: ({ children }) => <ul className="list-disc pl-6 my-4 space-y-2">{children}</ul>,
+          ol: ({ children }) => <ol className="list-decimal pl-6 my-4 space-y-2">{children}</ol>,
+          li: ({ children }) => <li className="text-base leading-7">{children}</li>,
+          p: ({ children }) => <p className="text-base leading-7">{children}</p>,
+          strong: ({ children }) => <strong className="font-bold text-foreground">{children}</strong>,
+          em: ({ children }) => <em className="italic">{children}</em>,
         }}>
         {content}
       </ReactMarkdown>
