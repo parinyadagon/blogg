@@ -22,11 +22,11 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { postSchema, type PostFormValues } from "@/lib/schemas";
 
-interface ArticleEditorProps {
+interface PostEditorProps {
   postId?: string;
 }
 
-export const ArticleEditor: React.FC<ArticleEditorProps> = ({ postId }) => {
+export const PostEditor: React.FC<PostEditorProps> = ({ postId }) => {
   const router = useRouter();
   const isEditing = !!postId;
 
