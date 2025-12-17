@@ -104,14 +104,14 @@ const PostsList: React.FC = () => {
                 <img src={post.coverImage} alt={post.title} className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-lg sm:rounded-xl shrink-0" />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start sm:items-center gap-2 mb-1">
-                    <h3 className="font-medium text-foreground text-sm sm:text-base line-clamp-2 sm:truncate group-hover:text-accent transition-colors">
+                    <h3 className="font-semibold text-foreground text-sm sm:text-base line-clamp-2 sm:truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:underline underline-offset-2 transition-all duration-200 cursor-pointer">
                       {post.title}
                     </h3>
                     {post.featured && <Star className="w-4 h-4 text-amber-500 fill-amber-500 shrink-0 mt-0.5 sm:mt-0" />}
                   </div>
                   <p className="text-xs sm:text-sm text-muted-foreground line-clamp-1 sm:truncate mb-2">{post.excerpt}</p>
                   <div className="flex items-center gap-2 sm:gap-3 text-xs flex-wrap">
-                    <span className="bg-accent/10 text-accent px-2 py-0.5 rounded-full">{post.category}</span>
+                    <span className="bg-blue-500/10 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded-full font-medium">{post.category}</span>
                     <span className="text-muted-foreground hidden sm:inline">{format(new Date(post.publishedAt), "d MMM yyyy", { locale: th })}</span>
                     <span className="text-muted-foreground">{post.readingTime} นาที</span>
                     <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-500">
