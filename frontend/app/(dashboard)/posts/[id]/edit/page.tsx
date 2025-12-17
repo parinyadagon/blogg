@@ -1,10 +1,10 @@
 "use client";
 
-import { ArticleEditor } from "@/components/blog/post-editor";
+import { PostEditor } from "@/components/blog/post-editor";
 import { use } from "react";
 
 export default function EditPostPage({ params }: { params: Promise<{ id: string }> }) {
   const { id: postId } = use(params);
 
-  return <ArticleEditor postId={postId} />;
+  return <PostEditor postId={postId} />;
 }
