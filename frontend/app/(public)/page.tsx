@@ -11,6 +11,7 @@ import { PostCardSkeletonList } from "@/components/blog/post-card-skeleton";
 import { InfiniteScrollLoader } from "@/components/blog/infinite-scroll-loader";
 import { usePullToRefresh } from "@/hooks/use-pull-to-refresh";
 import { PullToRefreshIndicator } from "@/components/blog/pull-to-refresh-indicator";
+import { PostLayout } from "@/components/layout/post-layout";
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -105,7 +106,7 @@ export default function Home() {
           </aside>
 
           {/* Main Content */}
-          <main className="flex-1 min-w-0">
+          <main className="flex-1 min-w-0 ">
             {/* Search */}
             <div className="mb-6 sm:mb-8">
               <SearchBar value={searchQuery} onChange={setSearchQuery} placeholder="Search posts..." />
@@ -128,7 +129,7 @@ export default function Home() {
                   </h2>
                 ) : null}
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-1 gap-4 sm:gap-6 xl:max-w-2xl">
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-1 gap-4 sm:gap-6 xl:max-w-2xl ">
                   {displayedItems.map((post, index) => (
                     <div key={post.id} className="animate-fade-in" style={{ animationDelay: `${(index % 3) * 100}ms` }}>
                       <PostCard post={post} />
