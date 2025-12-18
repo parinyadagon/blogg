@@ -39,7 +39,7 @@ export function PostCard({ post, featured }: PostCardProps) {
   return (
     <Link
       ref={cardRef}
-      href={`/post/${post.slug}`}
+      href={`/${post.slug}`}
       className={`group block bg-card rounded-2xl border border-border/50 overflow-hidden 
         card-shine card-glow
         hover:border-accent/30 hover:-translate-y-1.5
