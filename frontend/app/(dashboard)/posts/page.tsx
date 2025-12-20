@@ -185,14 +185,14 @@ const PostsList: React.FC = () => {
                         <MoreHorizontal className="w-4 h-4" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="rounded-xl">
-                      <DropdownMenuItem asChild className="rounded-lg">
+                    <DropdownMenuContent align="end" className="rounded-xl dark:bg-primary-foreground">
+                      <DropdownMenuItem asChild className="rounded-lg ">
                         <Link href={`/post/${post.slug}`} className="flex items-center gap-2">
                           <Eye className="w-4 h-4" />
                           ดูบทความ
                         </Link>
                       </DropdownMenuItem>
-                      <DropdownMenuItem asChild className="rounded-lg">
+                      <DropdownMenuItem asChild className="rounded-lg ">
                         <Link href={`/dashboard/posts/${post.id}/edit`} className="flex items-center gap-2">
                           <Edit className="w-4 h-4" />
                           แก้ไข
