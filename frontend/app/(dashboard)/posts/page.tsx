@@ -193,7 +193,7 @@ const PostsList: React.FC = () => {
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild className="rounded-lg ">
-                        <Link href={`/dashboard/posts/${post.id}/edit`} className="flex items-center gap-2">
+                        <Link href={`/posts/${post.id}/edit`} className="flex items-center gap-2">
                           <Edit className="w-4 h-4" />
                           แก้ไข
                         </Link>
