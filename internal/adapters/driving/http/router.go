@@ -58,6 +58,7 @@ func (r *Router) SetupRoutes() {
 
 	// Post routes (protected - require authentication)
 	postsAuth := api.Group("/posts", r.authMiddleware.RequireAuth)
+	postsAuth.GET("/me", r.postHandler.ListMyPosts)
 	postsAuth.POST("", r.postHandler.CreatePost)
 	postsAuth.PATCH("/:id", r.postHandler.UpdatePost)
 	postsAuth.DELETE("/:id", r.postHandler.DeletePost)

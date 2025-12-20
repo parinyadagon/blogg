@@ -69,6 +69,13 @@ func (r *PostRepository) ListPosts(ctx context.Context) ([]*domain.Post, error) 
 	return posts, err
 }
 
+func (r *PostRepository) FindPostsByUserID(ctx context.Context, userID string) ([]*domain.Post, error) {
+	var posts []*domain.Post
+	query := `SELECT * FROM posts WHERE user_id = ? AND deleted_at IS NULL ORDER BY created_at DESC`
+	err := r.db.SelectContext(ctx, &posts, query, userID)
+	return posts, err
+}
+
 func (r *PostRepository) AddCategoriesToPost(ctx context.Context, postID string, categoryIDs []string) error {
 	query := `INSERT INTO posts_categories (post_id, category_id) VALUES (?, ?)`
 	for _, categoryID := range categoryIDs {

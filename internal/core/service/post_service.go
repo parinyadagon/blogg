@@ -196,3 +196,18 @@ func (s *PostService) ListPosts(ctx context.Context) ([]*domain.Post, error) {
 
 	return posts, nil
 }
+
+func (s *PostService) ListPostsByUser(ctx context.Context, userID string) ([]*domain.Post, error) {
+	posts, err := s.postRepo.FindPostsByUserID(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	// Load categories for each post
+	for _, post := range posts {
+		categories, _ := s.postRepo.GetPostCategories(ctx, post.ID)
+		post.Categories = categories
+	}
+
+	return posts, nil
+}

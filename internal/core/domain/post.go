@@ -11,7 +11,7 @@ type Post struct {
 	UserID      string     `json:"user_id" db:"user_id"`
 	Title       string     `json:"title" db:"title"`
 	Slug        string     `json:"slug" db:"slug"`
-	Image       string     `json:"image" db:"image"`
+	Image       string     `json:"image" db:"image"` // TODO: Change to CoverImage
 	Content     string     `json:"content" db:"content"`
 	Excerpt     string     `json:"excerpt" db:"excerpt"`
 	IsPublished bool       `json:"is_published" db:"is_published"`

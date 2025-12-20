@@ -202,3 +202,21 @@ func (h *PostHandler) DeletePost(c echo.Context) error {
 		Data:       nil,
 	})
 }
+
+func (h *PostHandler) ListMyPosts(c echo.Context) error {
+	userID, err := middleware.GetUserID(c)
+	if err != nil {
+		return httphelper.HandleServiceError(c, err)
+	}
+
+	posts, err := h.postService.ListPostsByUser(c.Request().Context(), userID)
+	if err != nil {
+		return httphelper.HandleServiceError(c, err)
+	}
+
+	return httphelper.SuccessResponse(c, httphelper.SuccessResponseParams{
+		StatusCode: http.StatusOK,
+		Message:    "My posts retrieved successfully",
+		Data:       posts,
+	})
+}

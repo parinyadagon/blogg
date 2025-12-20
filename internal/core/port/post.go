@@ -11,6 +11,7 @@ type PostServicePort interface {
 	UpdatePost(ctx context.Context, id string, userID string, req *domain.Post, categoryIDs *[]string) (*domain.Post, error)
 	DeletePost(ctx context.Context, id string, userID string) error
 	ListPosts(ctx context.Context) ([]*domain.Post, error)
+	ListPostsByUser(ctx context.Context, userID string) ([]*domain.Post, error)
 }
 
 type PostRepositoryPort interface {
@@ -20,6 +21,7 @@ type PostRepositoryPort interface {
 	UpdatePost(ctx context.Context, p *domain.Post) error
 	DeletePost(ctx context.Context, postID string) error
 	ListPosts(ctx context.Context) ([]*domain.Post, error)
+	FindPostsByUserID(ctx context.Context, userID string) ([]*domain.Post, error)
 	AddCategoriesToPost(ctx context.Context, postID string, categoryIDs []string) error
 	RemoveCategoriesFromPost(ctx context.Context, postID string) error
 	GetPostCategories(ctx context.Context, postID string) ([]domain.Category, error)
