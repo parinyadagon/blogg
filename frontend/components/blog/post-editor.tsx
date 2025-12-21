@@ -75,7 +75,7 @@ export const PostEditor: React.FC<PostEditorProps> = ({ postId }) => {
     const fetchPost = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch(`/api/posts/${postId}`);
+        const response = await fetch(`/api/me/posts/${postId}`);
         const result = await response.json();
 
         if (result.success && result.data) {
@@ -190,7 +190,7 @@ export const PostEditor: React.FC<PostEditorProps> = ({ postId }) => {
 
   // Create new post
   const createPost = async (data: PostFormValues) => {
-    const response = await fetch("/api/posts", {
+    const response = await fetch("/api/me/posts", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -213,7 +213,7 @@ export const PostEditor: React.FC<PostEditorProps> = ({ postId }) => {
       throw new Error("Post ID is required for update");
     }
 
-    const response = await fetch(`/api/posts/${postId}`, {
+    const response = await fetch(`/api/me/posts/${postId}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",

@@ -52,7 +52,7 @@ const PostsList: React.FC = () => {
     const fetchPosts = async () => {
       try {
         setLoading(true);
-        const response = await fetch("/api/posts/me");
+        const response = await fetch("/api/me/posts");
         const result = await response.json();
 
         if (result.success && result.data) {
