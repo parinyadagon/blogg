@@ -27,7 +27,7 @@ export function CodeSkeleton() {
       </div>
 
       {/* 3. ปุ่ม Copy ปลอม (เพื่อ layout ที่ไม่กระตุก) */}
-      <div className="absolute top-3 right-3 h-8 w-8 rounded bg-muted-foreground/10" />
+      <div className="absolute top-3 right-3 h-4 w-4 rounded bg-muted-foreground/10" />
     </div>
   );
 }
