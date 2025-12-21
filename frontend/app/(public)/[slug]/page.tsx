@@ -1,26 +1,115 @@
 "use client";
 
-import { use, useState } from "react";
-import { notFound } from "next/navigation";
+import { use, useEffect, useState } from "react";
+import { notFound, useRouter } from "next/navigation";
 
-// import { ShareButtons } from "@/components/blog/ShareButtons";
-
-import { posts } from "@/data/posts";
-import { Clock, Calendar, ArrowLeft, Heart, PanelLeftClose, PanelRightClose } from "lucide-react";
+import { type Post } from "@/data/posts";
+import { Clock, Calendar, ArrowLeft, Heart, PanelLeftClose, PanelRightClose, Loader2 } from "lucide-react";
 
 import { Switch } from "@/components/ui/switch";
 import Link from "next/link";
 import { MarkdownRenderer } from "@/components/blog/markdown-renderer";
 import { TableOfContents } from "@/components/blog/table-of-contents";
 import { RelatedPosts } from "@/components/blog/relate-posts";
+import { toast } from "sonner";
 
 const PostPage = ({ params }: { params: Promise<{ slug: string }> }) => {
   const { slug } = use(params);
-  const post = posts.find((a) => a.slug === slug);
+  const router = useRouter();
+  const [post, setPost] = useState<Post | null>(null);
+  const [relatedPosts, setRelatedPosts] = useState<Post[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [notFoundError, setNotFoundError] = useState(false);
   const [tocOnRight, setTocOnRight] = useState(false);
 
-  if (!post) {
+  // Hash-based scroll restoration
+  useEffect(() => {
+    if (!post) return; // Wait for post to be loaded
+
+    const handleHashScroll = () => {
+      const hash = decodeURIComponent(window.location.hash.slice(1));
+
+      if (hash) {
+        // Wait for content to render
+        setTimeout(() => {
+          const element = document.getElementById(hash);
+          if (element) {
+            const offset = 250;
+            const elementTop = element.getBoundingClientRect().top + window.scrollY;
+            const scrollPosition = Math.max(0, elementTop - offset);
+            window.scrollTo({ top: scrollPosition, behavior: "smooth" });
+          }
+        }, 500);
+      } else {
+        // No hash, scroll to top
+        window.scrollTo({ top: 0, behavior: "instant" });
+      }
+    };
+
+    // Handle initial load and hash changes
+    handleHashScroll();
+    window.addEventListener("hashchange", handleHashScroll);
+
+    return () => {
+      window.removeEventListener("hashchange", handleHashScroll);
+    };
+  }, [post]);
+
+  // Fetch post data
+  useEffect(() => {
+    const fetchPost = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(`/api/posts/${slug}`);
+        const result = await response.json();
+
+        if (result.success && result.data) {
+          setPost(result.data);
+
+          // Fetch related posts (you might want to add a separate API endpoint for this)
+          const relatedResponse = await fetch(`/api/posts`);
+          const relatedResult = await relatedResponse.json();
+
+          if (relatedResult.success && relatedResult.data) {
+            const related = relatedResult.data.filter(
+              (p: Post) =>
+                p.id !== result.data.id && (p.category === result.data.category || p.tags.some((tag: string) => result.data.tags.includes(tag)))
+            );
+            setRelatedPosts(related.slice(0, 3));
+          }
+        } else {
+          setNotFoundError(true);
+          toast.error("ไม่พบบทความ");
+        }
+      } catch (error) {
+        console.error("Error fetching post:", error);
+        toast.error("เกิดข้อผิดพลาด", {
+          description: "ไม่สามารถโหลดบทความได้",
+        });
+        setNotFoundError(true);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPost();
+  }, [slug]);
+
+  // Show not found
+  if (notFoundError) {
     notFound();
+  }
+
+  // Show loading state
+  if (isLoading || !post) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="w-8 h-8 animate-spin text-accent" />
+          <p className="text-sm text-muted-foreground">กำลังโหลดบทความ...</p>
+        </div>
+      </div>
+    );
   }
 
   const formattedDate = new Date(post.publishedAt).toLocaleDateString("en-US", {
@@ -28,10 +117,6 @@ const PostPage = ({ params }: { params: Promise<{ slug: string }> }) => {
     month: "long",
     day: "numeric",
   });
-
-  const relatedPosts = posts.filter((a) => a.id !== post.id && (a.category === post.category || a.tags.some((tag) => post.tags.includes(tag))));
-
-  const currentUrl = typeof window !== "undefined" ? window.location.href : "";
 
   return (
     <div>
@@ -56,13 +141,13 @@ const PostPage = ({ params }: { params: Promise<{ slug: string }> }) => {
         <aside className={`lg:w-56 shrink-0 ${tocOnRight ? "order-2" : "order-2 lg:order-1"}`}>
           <div className="lg:sticky lg:top-20 space-y-4 sm:space-y-6">
             {/* Author */}
-            <div className="flex items-center gap-3 p-4 bg-card rounded-2xl shadow-card">
+            {/* <div className="flex items-center gap-3 p-4 bg-card rounded-2xl shadow-card">
               <img src={post.author.avatar} alt={post.author.name} className="h-10 w-10 rounded-full object-cover ring-2 ring-background" />
               <div>
                 <div className="font-medium text-foreground text-sm">{post.author.name}</div>
                 <div className="text-xs text-muted-foreground">Author</div>
               </div>
-            </div>
+            </div> */}
 
             {/* Table of Contents */}
             <TableOfContents content={post.content} />
@@ -99,11 +184,11 @@ const PostPage = ({ params }: { params: Promise<{ slug: string }> }) => {
             <span className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 bg-accent/10 text-accent rounded-full text-xs font-medium">
               {post.category}
             </span>
-            {post.tags.map((tag) => (
+            {/* {post.tags.map((tag) => (
               <span key={tag} className="px-2.5 sm:px-3 py-1 bg-muted rounded-full text-xs text-muted-foreground">
                 {tag}
               </span>
-            ))}
+            ))} */}
           </div>
 
           {/* Content */}

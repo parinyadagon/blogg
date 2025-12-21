@@ -26,8 +26,11 @@ export function TableOfContents({ content }: TableOfContentsProps) {
       const text = match[2].trim();
       const id = text
         .toLowerCase()
-        .replace(/[^a-z0-9ก-๙\s]/g, "")
-        .replace(/\s+/g, "-");
+        .replace(/[^\w\s\u0E00-\u0E7F-]/g, "") // Keep alphanumeric, spaces, Thai characters, and hyphens
+        .trim()
+        .replace(/\s+/g, "-") // Replace spaces with hyphens
+        .replace(/-+/g, "-") // Replace multiple hyphens with single hyphen
+        .replace(/^-|-$/g, ""); // Remove leading/trailing hyphens
 
       matches.push({ id, text, level });
     }
@@ -55,14 +58,29 @@ export function TableOfContents({ content }: TableOfContentsProps) {
     return () => observer.disconnect();
   }, [headings]);
 
+  // Update URL hash when scrolling (without triggering scroll)
+  useEffect(() => {
+    if (activeId) {
+      // Only update if different from current hash
+      const currentHash = decodeURIComponent(window.location.hash.slice(1));
+      if (currentHash !== activeId) {
+        window.history.replaceState(null, "", `#${activeId}`);
+      }
+    }
+  }, [activeId]);
+
   if (headings.length === 0) return null;
 
   const handleClick = (id: string) => {
+    // Update URL hash
+    window.history.pushState(null, "", `#${id}`);
+
     const element = document.getElementById(id);
     if (element) {
       const offset = 100;
-      const top = element.getBoundingClientRect().top + window.scrollY - offset;
-      window.scrollTo({ top, behavior: "smooth" });
+      const elementTop = element.getBoundingClientRect().top + window.scrollY;
+      const scrollPosition = Math.max(0, elementTop - offset);
+      window.scrollTo({ top: scrollPosition, behavior: "smooth" });
     }
   };
 
