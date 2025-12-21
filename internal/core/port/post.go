@@ -7,7 +7,8 @@ import (
 
 type PostServicePort interface {
 	CreatePost(ctx context.Context, req *domain.Post, categoryIDs []string) (*domain.Post, error)
-	GetPost(ctx context.Context, id string) (*domain.Post, error)
+	GetPostByID(ctx context.Context, id string) (*domain.Post, error)
+	GetPostBySlug(ctx context.Context, slug string) (*domain.Post, error)
 	UpdatePost(ctx context.Context, id string, userID string, req *domain.Post, categoryIDs *[]string) (*domain.Post, error)
 	DeletePost(ctx context.Context, id string, userID string) error
 	ListPosts(ctx context.Context) ([]*domain.Post, error)

@@ -61,8 +61,27 @@ func (s *PostService) CreatePost(ctx context.Context, p *domain.Post, categoryID
 	return p, nil
 }
 
-func (s *PostService) GetPost(ctx context.Context, id string) (*domain.Post, error) {
+func (s *PostService) GetPostByID(ctx context.Context, id string) (*domain.Post, error) {
 	post, err := s.postRepo.FindPostByID(ctx, id)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, domain.ErrPostNotFound
+		}
+		return nil, err
+	}
+	if post == nil {
+		return nil, domain.ErrPostNotFound
+	}
+
+	// Load categories
+	categories, _ := s.postRepo.GetPostCategories(ctx, post.ID)
+	post.Categories = categories
+
+	return post, nil
+}
+
+func (s *PostService) GetPostBySlug(ctx context.Context, slug string) (*domain.Post, error) {
+	post, err := s.postRepo.FindPostBySlug(ctx, slug)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, domain.ErrPostNotFound

@@ -112,10 +112,39 @@ func (h *PostHandler) ListPosts(c echo.Context) error {
 }
 
 func (h *PostHandler) GetPost(c echo.Context) error {
-	id := c.Param("id")
-	post, err := h.postService.GetPost(c.Request().Context(), id)
+	slug := c.Param("slug")
+	post, err := h.postService.GetPostBySlug(c.Request().Context(), slug)
 	if err != nil {
 		return httphelper.HandleServiceError(c, err)
+	}
+
+	return httphelper.SuccessResponse(c, httphelper.SuccessResponseParams{
+		StatusCode: http.StatusOK,
+		Message:    "Post retrieved successfully",
+		Data:       post,
+	})
+}
+func (h *PostHandler) GetPostMe(c echo.Context) error {
+	id := c.Param("id")
+
+	// Get user ID from JWT token
+	userID, err := middleware.GetUserID(c)
+	if err != nil {
+		return httphelper.HandleServiceError(c, err)
+	}
+
+	post, err := h.postService.GetPostByID(c.Request().Context(), id)
+	if err != nil {
+		return httphelper.HandleServiceError(c, err)
+	}
+
+	// Check if post belongs to the user
+	if post.UserID != userID {
+		return httphelper.ErrorResponse(c, httphelper.ErrorResponseParams{
+			StatusCode: http.StatusForbidden,
+			Message:    "You don't have permission to access this post",
+			ErrorCode:  "FORBIDDEN",
+		})
 	}
 
 	return httphelper.SuccessResponse(c, httphelper.SuccessResponseParams{
