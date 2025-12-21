@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect, useCallback } from "react";
 
-import { posts, categories, type Post } from "@/data/posts";
+import { categories, type Post } from "@/data/posts";
 import { PostCard } from "@/components/blog/post-card";
 import { SidebarFilter } from "@/components/blog/sidebar-filter";
 import { SearchBar } from "@/components/blog/search-bar";
@@ -12,18 +12,43 @@ import { InfiniteScrollLoader } from "@/components/blog/infinite-scroll-loader";
 import { usePullToRefresh } from "@/hooks/use-pull-to-refresh";
 import { PullToRefreshIndicator } from "@/components/blog/pull-to-refresh-indicator";
 import { PostLayout } from "@/components/layout/post-layout";
+import { toast } from "sonner";
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [isLoading, setIsLoading] = useState(true);
+  const [posts, setPosts] = useState<Post[]>([]);
 
-  // Simulate initial loading
-  useEffect(() => {
-    const timer = setTimeout(() => {
+  // Fetch posts from API
+  const fetchPosts = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch("/api/posts");
+      const result = await response.json();
+
+      if (result.success && result.data) {
+        setPosts(result.data);
+      } else {
+        toast.error("ไม่สามารถโหลดบทความได้", {
+          description: result.message || "กรุณาลองใหม่อีกครั้ง",
+        });
+        setPosts([]);
+      }
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+      toast.error("เกิดข้อผิดพลาด", {
+        description: "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้",
+      });
+      setPosts([]);
+    } finally {
       setIsLoading(false);
-    }, 1200);
-    return () => clearTimeout(timer);
+    }
+  }, []);
+
+  // Initial load
+  useEffect(() => {
+    fetchPosts();
   }, []);
 
   // Count posts per category
@@ -33,7 +58,7 @@ export default function Home() {
       label: cat === "All" ? "all" : cat.toLowerCase(),
       count: cat === "All" ? posts.length : posts.filter((a) => a.category === cat).length,
     }));
-  }, []);
+  }, [posts]);
 
   // Filter posts
   const filteredArticles = useMemo(() => {
@@ -51,7 +76,7 @@ export default function Home() {
       }
       return true;
     });
-  }, [searchQuery, selectedCategory]);
+  }, [posts, searchQuery, selectedCategory]);
 
   // Infinite scroll
   const { displayedItems, hasMore, isLoadingMore, loaderRef } = useInfiniteScroll<Post>({
@@ -61,11 +86,8 @@ export default function Home() {
 
   // Pull to refresh
   const handleRefresh = useCallback(async () => {
-    setIsLoading(true);
-    // Simulate refresh delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setIsLoading(false);
-  }, []);
+    await fetchPosts();
+  }, [fetchPosts]);
 
   const { containerRef, pullDistance, isRefreshing, progress, shouldRefresh } = usePullToRefresh({
     onRefresh: handleRefresh,
