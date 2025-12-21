@@ -1,26 +1,37 @@
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { oneLight } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { useTheme } from "next-themes";
-import { Copy, Check } from "lucide-react";
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
+
+// import { CodeBlock } from "./code-block";
+import dynamic from "next/dynamic";
+import { CodeSkeleton } from "./code-skeleton";
+
+const CodeBlock = dynamic(() => import("./code-block").then((mod) => mod.CodeBlock), {
+  ssr: false,
+  loading: () => <CodeSkeleton />,
+});
 
 interface MarkdownRendererProps {
   content: string;
 }
 
-function CodeBlock({ language, children }: { language: string; children: string }) {
+/* function CodeBlock({ language, children }: { language: string; children: string }) {
   const { theme } = useTheme();
   const [copied, setCopied] = useState(false);
+
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+  }, []);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(children);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+
+  const syntaxStyle = mounted && theme === "dark" ? oneDark : oneLight;
 
   return (
     <div className="relative group my-6">
@@ -32,7 +43,7 @@ function CodeBlock({ language, children }: { language: string; children: string 
       {language && <div className="absolute top-3 left-4 text-xs font-mono text-muted-foreground/70">{language}</div>}
       <SyntaxHighlighter
         language={language || "text"}
-        style={theme === "dark" ? oneDark : oneLight}
+        style={syntaxStyle}
         customStyle={{
           margin: 0,
           borderRadius: "0.75rem",
@@ -43,14 +54,14 @@ function CodeBlock({ language, children }: { language: string; children: string 
         lineNumberStyle={{
           minWidth: "2.5em",
           paddingRight: "1em",
-          color: theme === "dark" ? "#666" : "#999",
+          color: mounted && theme === "dark" ? "#666" : "#999",
         }}>
         {children.trim()}
       </SyntaxHighlighter>
     </div>
   );
 }
-
+ */
 export function MarkdownRenderer({ content }: MarkdownRendererProps) {
   return (
     <div className="prose prose-slate dark:prose-invert max-w-none">
