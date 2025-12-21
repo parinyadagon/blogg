@@ -188,30 +188,61 @@ export const PostEditor: React.FC<PostEditorProps> = ({ postId }) => {
     reader.readAsDataURL(file);
   };
 
+  // Create new post
+  const createPost = async (data: PostFormValues) => {
+    const response = await fetch("/api/posts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+      credentials: "include",
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "ไม่สามารถสร้างบทความได้");
+    }
+
+    return response.json();
+  };
+
+  // Update existing post
+  const updatePost = async (data: PostFormValues) => {
+    if (!postId) {
+      throw new Error("Post ID is required for update");
+    }
+
+    const response = await fetch(`/api/posts/${postId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+      credentials: "include",
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "ไม่สามารถอัปเดตบทความได้");
+    }
+
+    return response.json();
+  };
+
   const onSubmit = async (data: PostFormValues, publishStatus: "draft" | "published") => {
     try {
       setIsSaving(true);
       setStatus(publishStatus);
 
-      // Update is_published based on publish status
+      // Prepare data with publish status
       const submitData = {
         ...data,
-        is_published: publishStatus === "published",
+        publish: publishStatus === "published",
       };
 
-      const url = isEditing ? `/api/posts/${postId}` : "/api/posts";
-      const method = isEditing ? "PATCH" : "POST";
-
-      const response = await fetch(url, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(submitData),
-        credentials: "include", // Send cookies with request
-      });
-
-      const result = await response.json();
+      // Call appropriate API function
+      const result = isEditing ? await updatePost(submitData) : await createPost(submitData);
 
       if (result.success) {
         toast.success(publishStatus === "published" ? "เผยแพร่บทความสำเร็จ" : "บันทึกฉบับร่างสำเร็จ", {
@@ -219,7 +250,7 @@ export const PostEditor: React.FC<PostEditorProps> = ({ postId }) => {
         });
         setLastSaved(new Date());
 
-        // Redirect to posts list after successful save
+        // Redirect to posts list after successful create
         if (!isEditing) {
           setTimeout(() => {
             router.push("/posts");
@@ -233,7 +264,7 @@ export const PostEditor: React.FC<PostEditorProps> = ({ postId }) => {
     } catch (error) {
       console.error("Submit error:", error);
       toast.error("เกิดข้อผิดพลาด", {
-        description: "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้",
+        description: error instanceof Error ? error.message : "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้",
       });
     } finally {
       setIsSaving(false);
