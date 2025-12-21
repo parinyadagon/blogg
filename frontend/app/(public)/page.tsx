@@ -81,7 +81,7 @@ export default function Home() {
         </div>
 
         {/* Mobile: Category filter horizontal scroll */}
-        <div className="lg:hidden mb-6 -mx-4 px-4 overflow-x-auto scrollbar-thin">
+        <div className="lg:hidden mb-6 px-4 overflow-x-auto scrollbar-thin">
           <div className="flex gap-2 pb-2">
             {categoryItems.map((item) => (
               <button
