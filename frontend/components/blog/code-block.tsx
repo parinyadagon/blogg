@@ -2,7 +2,7 @@
 
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 // ใช้ import path นี้ชัวร์กว่าใน Next.js environment
-import { vscDarkPlus, vs } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { oneDark, oneLight } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { useTheme } from "next-themes";
 import { Copy, Check } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -27,7 +27,7 @@ export function CodeBlock({ language, children }: { language: string; children: 
   // เลือก Style: ถ้ายังไม่ mount หรือเป็น Dark ให้ใช้ vscDarkPlus (สีสวยเหมือน VS Code)
   // ต้องเช็ค mounted เพื่อป้องกัน hydration mismatch ในวินาทีแรก (แม้จะใช้ dynamic loading ก็ตาม กันเหนียวไว้)
   const isDark = !mounted || resolvedTheme === "dark";
-  const syntaxStyle = isDark ? vscDarkPlus : vs;
+  const syntaxStyle = isDark ? oneDark : oneLight;
 
   return (
     <div className="relative group my-6 rounded-xl overflow-hidden border border-border/50">
@@ -51,24 +51,16 @@ export function CodeBlock({ language, children }: { language: string; children: 
             fontSize: "0.875rem",
             lineHeight: "1.7",
           }}
-          codeTagProps={{
-            style: {
-              fontFamily: "var(--font-mono)", // ใช้ Font Mono ของโปรเจกต์
-            },
-          }}
           showLineNumbers={true} // เปิดเลขบรรทัดดูว่าทำงานไหม
           lineNumberStyle={{
             minWidth: "2.5em",
             paddingRight: "1em",
-            color: isDark ? "#666" : "#999",
+            color: resolvedTheme ? "#666" : "#999",
             textAlign: "right",
           }}>
           {children.trim()}
         </SyntaxHighlighter>
       </div>
-
-      {/* Background color layer (จัดการสีพื้นหลังแยกเองเพื่อความสวยงาม) */}
-      <div className={`absolute inset-0 -z-10 ${isDark ? "bg-[#1e1e1e]" : "bg-white"}`} />
     </div>
   );
 }
