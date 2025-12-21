@@ -185,7 +185,7 @@ const PostsList: React.FC = () => {
                         <MoreHorizontal className="w-4 h-4" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="rounded-xl dark:bg-primary-foreground">
+                    <DropdownMenuContent align="end" className="rounded-xl bg-background dark:bg-primary-foreground">
                       <DropdownMenuItem asChild className="rounded-lg ">
                         <Link href={`/post/${post.slug}`} className="flex items-center gap-2">
                           <Eye className="w-4 h-4" />
