@@ -34,7 +34,7 @@ const PostPage = ({ params }: { params: Promise<{ slug: string }> }) => {
   const currentUrl = typeof window !== "undefined" ? window.location.href : "";
 
   return (
-    <div className="py-6 sm:py-8 lg:py-12">
+    <div>
       {/* Back Link & Layout Toggle */}
       <div className="flex items-center justify-between mb-6 sm:mb-8">
         <Link href="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">

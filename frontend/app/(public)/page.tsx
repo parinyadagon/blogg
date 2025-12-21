@@ -74,7 +74,7 @@ export default function Home() {
 
   return (
     <>
-      <div ref={containerRef} className="container px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
+      <div ref={containerRef}>
         {/* Pull to Refresh Indicator - Mobile only */}
         <div className="lg:hidden">
           <PullToRefreshIndicator pullDistance={pullDistance} isRefreshing={isRefreshing} progress={progress} shouldRefresh={shouldRefresh} />
