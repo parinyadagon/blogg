@@ -4,17 +4,17 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:808
 
 export async function GET(request: NextRequest) {
   try {
-    // Get query parameters from the request
-    const searchParams = request.nextUrl.searchParams;
-    const queryString = searchParams.toString();
-    const url = queryString ? `${BACKEND_URL}/api/v1/posts?${queryString}` : `${BACKEND_URL}/api/v1/posts`;
+    // Get cookies from request (auth token)
+    const cookieHeader = request.headers.get("cookie");
 
-    // Call backend API
-    const response = await fetch(url, {
+    // Call backend my posts API
+    const response = await fetch(`${BACKEND_URL}/api/v1/me/posts`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        ...(cookieHeader && { Cookie: cookieHeader }),
       },
+      cache: "no-store", // Disable caching for fresh data
     });
 
     const data = await response.json();
@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(data, { status: 200 });
   } catch (error) {
-    console.error("Get posts error:", error);
+    console.error("Fetch my posts error:", error);
     return NextResponse.json(
       {
         success: false,
@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
         message: "Internal server error",
         error: {
           code: "INTERNAL_ERROR",
-          message: "Failed to fetch posts list",
+          message: "Failed to connect to posts service",
         },
       },
       { status: 500 }
@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-/* export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
     const cookieHeader = request.headers.get("cookie");
 
     // Call backend API
-    const response = await fetch(`${BACKEND_URL}/api/v1/posts`, {
+    const response = await fetch(`${BACKEND_URL}/api/v1/me/posts`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -82,4 +82,3 @@ export async function GET(request: NextRequest) {
     );
   }
 }
- */
