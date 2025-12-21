@@ -756,6 +756,74 @@ func (_c *MockPostServicePort_ListPosts_Call) RunAndReturn(run func(ctx context.
 	return _c
 }
 
+// ListPostsByUser provides a mock function for the type MockPostServicePort
+func (_mock *MockPostServicePort) ListPostsByUser(ctx context.Context, userID string) ([]*domain.Post, error) {
+	ret := _mock.Called(ctx, userID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for ListPostsByUser")
+	}
+
+	var r0 []*domain.Post
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string) ([]*domain.Post, error)); ok {
+		return returnFunc(ctx, userID)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string) []*domain.Post); ok {
+		r0 = returnFunc(ctx, userID)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*domain.Post)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = returnFunc(ctx, userID)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockPostServicePort_ListPostsByUser_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ListPostsByUser'
+type MockPostServicePort_ListPostsByUser_Call struct {
+	*mock.Call
+}
+
+// ListPostsByUser is a helper method to define mock.On call
+//   - ctx context.Context
+//   - userID string
+func (_e *MockPostServicePort_Expecter) ListPostsByUser(ctx interface{}, userID interface{}) *MockPostServicePort_ListPostsByUser_Call {
+	return &MockPostServicePort_ListPostsByUser_Call{Call: _e.mock.On("ListPostsByUser", ctx, userID)}
+}
+
+func (_c *MockPostServicePort_ListPostsByUser_Call) Run(run func(ctx context.Context, userID string)) *MockPostServicePort_ListPostsByUser_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 string
+		if args[1] != nil {
+			arg1 = args[1].(string)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *MockPostServicePort_ListPostsByUser_Call) Return(posts []*domain.Post, err error) *MockPostServicePort_ListPostsByUser_Call {
+	_c.Call.Return(posts, err)
+	return _c
+}
+
+func (_c *MockPostServicePort_ListPostsByUser_Call) RunAndReturn(run func(ctx context.Context, userID string) ([]*domain.Post, error)) *MockPostServicePort_ListPostsByUser_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // UpdatePost provides a mock function for the type MockPostServicePort
 func (_mock *MockPostServicePort) UpdatePost(ctx context.Context, id string, userID string, req *domain.Post, categoryIDs *[]string) (*domain.Post, error) {
 	ret := _mock.Called(ctx, id, userID, req, categoryIDs)
@@ -1178,6 +1246,74 @@ func (_c *MockPostRepositoryPort_FindPostBySlug_Call) Return(post *domain.Post, 
 }
 
 func (_c *MockPostRepositoryPort_FindPostBySlug_Call) RunAndReturn(run func(ctx context.Context, slug string) (*domain.Post, error)) *MockPostRepositoryPort_FindPostBySlug_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// FindPostsByUserID provides a mock function for the type MockPostRepositoryPort
+func (_mock *MockPostRepositoryPort) FindPostsByUserID(ctx context.Context, userID string) ([]*domain.Post, error) {
+	ret := _mock.Called(ctx, userID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for FindPostsByUserID")
+	}
+
+	var r0 []*domain.Post
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string) ([]*domain.Post, error)); ok {
+		return returnFunc(ctx, userID)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string) []*domain.Post); ok {
+		r0 = returnFunc(ctx, userID)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*domain.Post)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = returnFunc(ctx, userID)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockPostRepositoryPort_FindPostsByUserID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'FindPostsByUserID'
+type MockPostRepositoryPort_FindPostsByUserID_Call struct {
+	*mock.Call
+}
+
+// FindPostsByUserID is a helper method to define mock.On call
+//   - ctx context.Context
+//   - userID string
+func (_e *MockPostRepositoryPort_Expecter) FindPostsByUserID(ctx interface{}, userID interface{}) *MockPostRepositoryPort_FindPostsByUserID_Call {
+	return &MockPostRepositoryPort_FindPostsByUserID_Call{Call: _e.mock.On("FindPostsByUserID", ctx, userID)}
+}
+
+func (_c *MockPostRepositoryPort_FindPostsByUserID_Call) Run(run func(ctx context.Context, userID string)) *MockPostRepositoryPort_FindPostsByUserID_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 string
+		if args[1] != nil {
+			arg1 = args[1].(string)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *MockPostRepositoryPort_FindPostsByUserID_Call) Return(posts []*domain.Post, err error) *MockPostRepositoryPort_FindPostsByUserID_Call {
+	_c.Call.Return(posts, err)
+	return _c
+}
+
+func (_c *MockPostRepositoryPort_FindPostsByUserID_Call) RunAndReturn(run func(ctx context.Context, userID string) ([]*domain.Post, error)) *MockPostRepositoryPort_FindPostsByUserID_Call {
 	_c.Call.Return(run)
 	return _c
 }
