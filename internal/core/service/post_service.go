@@ -135,8 +135,8 @@ func (s *PostService) UpdatePost(ctx context.Context, id string, userID string, 
 	if p.Slug != "" {
 		existingPost.Slug = p.Slug
 	}
-	if p.Image != "" {
-		existingPost.Image = p.Image
+	if p.CoverImage != nil {
+		existingPost.CoverImage = p.CoverImage
 	}
 	if p.Content != "" {
 		existingPost.Content = p.Content

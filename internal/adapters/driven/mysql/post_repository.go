@@ -19,7 +19,7 @@ func NewPostRepository(db *sqlx.DB) *PostRepository {
 func (r *PostRepository) CreatePost(ctx context.Context, p *domain.Post) error {
 	query := `INSERT INTO posts (id, user_id, title, slug, image, content, excerpt, is_published, published_at, created_at, updated_at)
 			  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-	_, err := r.db.ExecContext(ctx, query, p.ID, p.UserID, p.Title, p.Slug, p.Image, p.Content, p.Excerpt, p.IsPublished, p.PublishedAt, p.CreatedAt, p.UpdatedAt)
+	_, err := r.db.ExecContext(ctx, query, p.ID, p.UserID, p.Title, p.Slug, p.CoverImage, p.Content, p.Excerpt, p.IsPublished, p.PublishedAt, p.CreatedAt, p.UpdatedAt)
 	return err
 }
 
@@ -52,7 +52,7 @@ func (r *PostRepository) FindPostBySlug(ctx context.Context, slug string) (*doma
 func (r *PostRepository) UpdatePost(ctx context.Context, p *domain.Post) error {
 	query := `UPDATE posts SET title = ?, slug = ?, image = ?, content = ?, excerpt = ?, is_published = ?, published_at = ?, updated_at = ?
 			  WHERE id = ?`
-	_, err := r.db.ExecContext(ctx, query, p.Title, p.Slug, p.Image, p.Content, p.Excerpt, p.IsPublished, p.PublishedAt, p.UpdatedAt, p.ID)
+	_, err := r.db.ExecContext(ctx, query, p.Title, p.Slug, p.CoverImage, p.Content, p.Excerpt, p.IsPublished, p.PublishedAt, p.UpdatedAt, p.ID)
 	return err
 }
 

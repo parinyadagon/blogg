@@ -76,11 +76,16 @@ func (h *PostHandler) CreatePost(c echo.Context) error {
 		return httphelper.HandleServiceError(c, err)
 	}
 
+	var coverImage *string
+	if req.Image != "" {
+		coverImage = &req.Image
+	}
+
 	post := &domain.Post{
 		UserID:      userID,
 		Title:       req.Title,
 		Slug:        req.Slug,
-		Image:       req.Image,
+		CoverImage:  coverImage,
 		Content:     req.Content,
 		Excerpt:     req.Excerpt,
 		IsPublished: req.Publish,
@@ -184,7 +189,7 @@ func (h *PostHandler) UpdatePost(c echo.Context) error {
 		post.Slug = *req.Slug
 	}
 	if req.Image != nil {
-		post.Image = *req.Image
+		post.CoverImage = req.Image
 	}
 	if req.Content != nil {
 		post.Content = *req.Content
